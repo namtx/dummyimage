@@ -1,0 +1,45 @@
+#!/usr/bin/env ruby
+
+require_relative "../lib/image.rb"
+require "optparse"
+
+options = {}
+
+optparse = OptionParser.new do |opts|
+    opts.banner = "Usage: "
+    options[:width] = "400"
+    opts.on("-w", "--width WIDTH", "Image width") do |width|
+        options[:width] = width
+    end
+    options[:height] = "300"
+    opts.on("-h", "--height HEIGHT", "Image height") do |height|
+        options[:height] = height
+    end
+    options[:fgcolor] = "fff"
+    opts.on("-f", "--foreground FOREGROUND", "Image foreground color") do |fg|
+        options[:fgcolor] = fg
+    end
+    options[:bgcolor] = "000"
+    opts.on("-b", "--background BACKGROUND", "Image background color") do |bg|
+        options[:bgcolor] = bg
+    end
+    options[:path] = ".png"
+    opts.on("-o", "--output PATH", "Image output name") do |path|
+        options[:path] = path
+    end
+
+    options[:help] = false
+    opts.on("--help", nil, "Display this screen") do
+        puts opts
+        options[:help] = true
+    end
+end
+
+optparse.parse!
+
+unless options[:help]
+    parser = DummyImage::Parser.new options[:path], width: options[:width], height: options[:height], bgcolor: options[:bgcolor], fgcolor: options[:fgcolor]
+
+    DummyImage::Image.new(parser).image
+    system "echo", "-e", "\e[92mYour dummy image is successfully created!"
+end
